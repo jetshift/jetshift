@@ -1,0 +1,16 @@
+services:
+  luigi:
+    build: .
+    image: jetshift:latest
+    container_name: jetshift
+    ports:
+      - 8082:8082 # Luigi port
+      - 80:80     # Flask port
+    volumes:
+      - .:/app
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

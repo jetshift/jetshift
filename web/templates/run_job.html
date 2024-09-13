@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="m-auto w-25">
+    <span class="d-none">{% block header %} Run Job {% endblock %}</span>
+
+    {% if job_completed %}
+      <div class="alert alert-success" role="alert">
+        Job {{ selected_job }} completed successfully!
+      </div>
+    {% endif %}
+
+    <form action="/run-job" method="post">
+      <div class="mb-3">
+        <label for="jobSelect" class="form-label">Select Job</label>
+        <select class="form-select" id="jobSelect" name="job">
+          {% for file, name in job_dict.items() %}
+            <option value="{{ file }}" {% if file == selected_job %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Run</button>
+    </form>
+  </div>
+{% endblock %}
