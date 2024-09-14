@@ -15,7 +15,7 @@ setup(
     install_requires=parse_requirements('requirements.txt'),
     entry_points={
         'console_scripts': [
-            'dev=jetshift_core.runners.entrypoint:main',
+            'dev=jetshift_core.runners.dev:main',
             'make=jetshift_core.stubs.make:main',
             'migrate=jetshift_core.runners.migration:main',
             'seed=jetshift_core.runners.seeder:main',

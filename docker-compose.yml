@@ -7,7 +7,7 @@ services:
       - 8082:8082 # Luigi port
       - 80:80     # Flask port
     volumes:
-      - .:/app
+      - .:/app:delegated
     networks:
       - default
 
