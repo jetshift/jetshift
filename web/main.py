@@ -11,7 +11,7 @@ from jetshift_core.helpers.common import run_job_in_new_process
 load_dotenv()
 redis_host = os.environ.get('REDIS_HOST', 'localhost')
 redis_port = os.environ.get('REDIS_PORT', 6379)
-job_queue = os.environ.get('JOB_QUEUE', True)
+job_queue = os.environ.get('JOB_QUEUE', False)
 operating_system = os.environ.get('OS', platform.system().lower())
 
 # Set up Flask app
@@ -19,8 +19,11 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # Set up Redis connection and RQ queue
-redis_conn = Redis(host=redis_host, port=redis_port)
-rq_queue = Queue(connection=redis_conn)
+if job_queue is True:
+    redis_conn = Redis(host=redis_host, port=redis_port)
+    rq_queue = Queue(connection=redis_conn)
+else:
+    rq_queue = None
 
 
 @app.route('/')
@@ -49,7 +52,7 @@ def run_job():
         if selected_job in job_dict:
             module_name = f'jobs.{selected_job}'
 
-            if job_queue is True and operating_system != 'windows':
+            if job_queue is True and operating_system is not 'windows':
                 # Send the job to the RQ queue
                 rq_queue.enqueue(run_job_in_new_process, module_name)
                 job_completed = True
