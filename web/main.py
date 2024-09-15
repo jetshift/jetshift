@@ -52,7 +52,7 @@ def run_job():
         if selected_job in job_dict:
             module_name = f'jobs.{selected_job}'
 
-            if job_queue is True and operating_system is not 'windows':
+            if job_queue is True and operating_system != 'windows':
                 # Send the job to the RQ queue
                 rq_queue.enqueue(run_job_in_new_process, module_name)
                 job_completed = True

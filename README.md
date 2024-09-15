@@ -22,8 +22,8 @@ For detailed usage instructions, please refer to the [JetShift Documentation](ht
 
 ## Linked Repositories
 
-- [JetShift Core](https://github.com/mdobydullah/jetshift-core)
-- [JetShift Docs](https://github.com/mdobydullah/jetshift-docs)
+- [JetShift Core](https://github.com/jetshift/core)
+- [JetShift Docs](https://github.com/jetshift/docs)
 
 ## License
 
