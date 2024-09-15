@@ -1,0 +1,8 @@
+jetshift-core==1.0.0a3
+python-dotenv==1.0.1
+flask==3.0.3
+waitress==3.0.0
+redis==5.0.8
+rq==1.16.2
+sentry-sdk==2.13.0
+python-json-logger==2.0.7

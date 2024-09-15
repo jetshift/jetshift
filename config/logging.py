@@ -10,7 +10,7 @@ load_dotenv()
 log_level = os.environ.get('LOG_LEVEL', 'ERROR')
 sentry_dsn = os.environ.get('SENTRY_DSN')
 
-# Step 1: Initialize Sentry SDK with Logging Integration
+# Initialize Sentry SDK with Logging Integration
 sentry_logging = LoggingIntegration(
     level=logging.INFO,  # Capture info and above as breadcrumbs
     event_level=logging.ERROR  # Send errors as events
@@ -67,10 +67,10 @@ else:
     }
     LOGGING["loggers"][""]["handlers"].append("file")
 
-# Step 3: Apply logging configuration
+# Apply logging configuration
 logging.config.dictConfig(LOGGING)
 
-# Example usage of the logger
+# Usage of the logger
 logger = logging.getLogger(__name__)
 
 # Demo
