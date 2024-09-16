@@ -2,16 +2,14 @@ import os
 import platform
 
 from flask import Flask, render_template, request, redirect, url_for
-from redis import Redis
 from rq import Queue
 from dotenv import load_dotenv
 from jetshift_core.helpers.common import run_job_in_new_process
 from config.logging import logger
+from config.database import redis_connection
 
 # Environment variables
 load_dotenv()
-redis_host = os.environ.get('REDIS_HOST', 'localhost')
-redis_port = os.environ.get('REDIS_PORT', 6379)
 job_queue = os.environ.get('JOB_QUEUE', 'False') == 'True'
 operating_system = os.environ.get('OS', platform.system().lower())
 
@@ -22,7 +20,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 # Set up Redis connection and RQ queue
 if job_queue is True:
     logger.info(f'JSetting up RQ queue')
-    redis_conn = Redis(host=redis_host, port=redis_port)
+    redis_conn = redis_connection()
     rq_queue = Queue(connection=redis_conn)
 else:
     rq_queue = None
@@ -45,7 +43,7 @@ def run_job():
         f.replace('.py', '') for f in os.listdir(jobs_directory)
         if f.endswith('.py') and f != '__init__.py' and not f.startswith('test_')
     ]
-    job_dict = {f: f.replace('_', ' ').title() for f in py_files}
+    available_jobs = {f: f.replace('_', ' ').title() for f in py_files}
     selected_job = request.args.get('j', '')
 
     logger.info(f'Job Queue: {job_queue}')
@@ -53,7 +51,7 @@ def run_job():
 
     if request.method == 'POST':
         selected_job = request.form.get('job')
-        if selected_job in job_dict:
+        if selected_job in available_jobs:
             module_name = f'jobs.{selected_job}'
 
             if job_queue is True and operating_system == 'linux':

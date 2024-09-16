@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 
 
-# Function to read requirements.txt
 def parse_requirements(filename):
     with open(filename, 'r') as file:
         return [line.strip() for line in file if line and not line.startswith("#")]
@@ -21,6 +20,7 @@ setup(
             'seed=jetshift_core.runners.seeder:main',
             'job=jetshift_core.runners.job:main',
             'quick=jetshift_core.runners.quicker:main',
+            'listen=jetshift_core.runners.listener:main',
         ],
     },
 )

@@ -14,6 +14,31 @@ def get_env_var(key, default=None):
     return os.environ.get(key, default)
 
 
+def redis_connection():
+    from config.logging import logger
+    from redis import Redis
+
+    try:
+        secrets = load_secrets()
+        host = secrets.get('REDIS_HOST', os.environ.get('REDIS_HOST', 'localhost'))
+        port = secrets.get('REDIS_PORT', os.environ.get('REDIS_PORT', 6379))
+        password = secrets.get('REDIS_PASSWORD', os.environ.get('REDIS_PASSWORD', None))
+        ssl = secrets.get('REDIS_SSL', os.environ.get('REDIS_SSL', 'False')).lower() in ['true', '1']
+
+        redis_conn = Redis(
+            host=host,
+            port=port,
+            password=password,
+            ssl=ssl,
+            decode_responses=True
+        )
+    except Exception as e:
+        logger.error(f'Error setting up Redis connection: {e}')
+        redis_conn = None
+
+    return redis_conn
+
+
 def mysql():
     secrets = load_secrets()
     return {
