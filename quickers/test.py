@@ -1,4 +1,4 @@
-from jetshift_core.helpers.quicker import migrations, seeders, job
+from jetshift_core.helpers.quicker import migrations, seeders, jobs
 
 
 def main():
@@ -6,12 +6,12 @@ def main():
     migrations(migrations_list)
     print("\nMigrations completed ✓✓✓\n")
 
-    migrations_list = ["users -n 10"]
-    seeders(migrations_list)
+    seeder_list = ["users -n 10"]
+    seeders(seeder_list)
     print("\nSeeders completed ✓✓✓\n")
 
     job_list = ["users"]
-    job(job_list)
+    jobs(job_list)
     print("\nJobs completed ✓✓✓\n")
 
 
