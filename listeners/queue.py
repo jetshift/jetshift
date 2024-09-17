@@ -1,27 +1,32 @@
-from dotenv import load_dotenv
-from jetshift_core.helpers.common import run_job_in_new_process, send_discord_message
-from rq import Queue
+from jetshift_core.helpers.listeners import *
 
-from config.database import redis_connection
-from config.logging import logger
-from jetshift_core.helpers.listeners import listen
-
-# Load environment variables
-load_dotenv()
-
+channel = os.environ.get('REDIS_EVENT_CHANNEL', 'test')
 
 def handle_message(message):
-    print('Test listener received message:', message)
+    print('Queue listener received message:', message)
 
-    # Send the job to the RQ queue
-    redis_conn = redis_connection()
-    rq_queue = Queue(connection=redis_conn)
-    rq_queue.enqueue(run_job_in_new_process, send_discord_message('Test message from listener'))
+    if message.get('type') == 'message':
+        params = (message.get('data'),)
+
+        # Send the job to the RQ queue
+        redis_conn = redis_connection()
+        rq_queue = Queue(connection=redis_conn)
+        rq_queue.enqueue(run_multi_process, send_discord_message, *params)
+
+
+def run_multi_process(function_to_call, *params):
+    try:
+        p = multiprocessing.Process(target=function_to_call, args=params)
+        p.start()
+        p.join()
+        logger.info("Process completed")
+    except Exception as e:
+        logger.error(f"An error occurred while running the process: {str(e)}")
 
 
 def main():
     try:
-        listen('queue-channel', handle_message)
+        listen(channel, handle_message)
     except Exception as e:
         logger.error(f"Failed to start listener: {e}", exc_info=True)
 
