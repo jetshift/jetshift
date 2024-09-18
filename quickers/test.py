@@ -6,7 +6,7 @@ def main():
     migrations(migrations_list)
     print("\nMigrations completed ✓✓✓\n")
 
-    seeder_list = ["users -n 10"]
+    seeder_list = ["users -n 5"]
     seeders(seeder_list)
     print("\nSeeders completed ✓✓✓\n")
 
