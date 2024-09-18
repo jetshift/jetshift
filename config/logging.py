@@ -44,7 +44,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {
+        "jetshift": {
             "handlers": ["stdout"],
             "level": log_level,
             "propagate": True
@@ -57,7 +57,7 @@ if sentry_dsn:
         "level": "ERROR",
         "class": "sentry_sdk.integrations.logging.EventHandler",
     }
-    LOGGING["loggers"][""]["handlers"].append("sentry")
+    LOGGING["loggers"]["jetshift"]["handlers"].append("sentry")
 else:
     LOGGING["handlers"]["file"] = {
         "class": "logging.FileHandler",
@@ -65,13 +65,10 @@ else:
         "formatter": "json",
         "level": "ERROR",
     }
-    LOGGING["loggers"][""]["handlers"].append("file")
+    LOGGING["loggers"]["jetshift"]["handlers"].append("file")
 
 # Apply logging configuration
 logging.config.dictConfig(LOGGING)
 
 # Usage of the logger
-logger = logging.getLogger(__name__)
-
-# Demo
-# logger.error("This is an error log message.")
+logger = logging.getLogger("jetshift")
