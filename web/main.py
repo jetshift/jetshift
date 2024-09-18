@@ -69,7 +69,7 @@ def run_job():
         return redirect(url_for('run_job', j=selected_job, completed=job_completed))
 
     job_completed = request.args.get('completed', 'False') == 'True'
-    return render_template('run_job.html', domain_name=domain_name, job_dict=job_dict, selected_job=selected_job, job_completed=job_completed)
+    return render_template('run_job.html', domain_name=domain_name, available_jobs=available_jobs, selected_job=selected_job, job_completed=job_completed)
 
 
 if __name__ == '__main__':

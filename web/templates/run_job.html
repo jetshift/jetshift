@@ -14,7 +14,7 @@
       <div class="mb-3">
         <label for="jobSelect" class="form-label">Select Job</label>
         <select class="form-select" id="jobSelect" name="job">
-          {% for file, name in job_dict.items() %}
+          {% for file, name in available_jobs.items() %}
             <option value="{{ file }}" {% if file == selected_job %}selected{% endif %}>{{ name }}</option>
           {% endfor %}
         </select>
