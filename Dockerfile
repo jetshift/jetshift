@@ -23,10 +23,6 @@ RUN mkdir -p /var/log && \
     touch /var/log/cron.log /var/log/cron.error.log && \
     chmod 666 /var/log/cron.log /var/log/cron.error.log
 
-# Copy entrypoint.sh and give it execution permissions
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 # Convert the crontab and entrypoint.sh files to Unix line endings in a single RUN command
 RUN dos2unix /etc/crontabs/root /entrypoint.sh
 
@@ -35,8 +31,8 @@ FROM python:3.12-alpine
 
 WORKDIR /app
 
-# Install runtime dependencies, including Redis server
-RUN apk add --no-cache libffi dos2unix redis && \
+# Install runtime dependencies, including Redis server and Supervisor
+RUN apk add --no-cache libffi dos2unix redis supervisor && \
     mkdir -p /var/log && \
     touch /var/log/cron.log /var/log/cron.error.log && \
     chmod 666 /var/log/cron.log /var/log/cron.error.log
@@ -51,13 +47,14 @@ COPY --from=build /app /app
 # Copy necessary files for cron jobs
 COPY --from=build /etc/crontabs/root /etc/crontabs/root
 
-# Copy entrypoint.sh to final image
-COPY --from=build /entrypoint.sh /entrypoint.sh
-
+# Install the app in editable mode
 RUN pip install -e .
 
 # Expose the necessary ports
-EXPOSE 8082 80 6379
+EXPOSE 8080 8082 6379
 
-# Set the entrypoint to entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# Supervisor configuration
+COPY supervisord.conf /etc/supervisord.conf
+
+# Set the entrypoint to start supervisord
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

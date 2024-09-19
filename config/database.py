@@ -27,7 +27,7 @@ def redis_connection():
 
         redis_conn = Redis(
             host=host,
-            port=port,
+            port=int(port),
             password=password,
             ssl=ssl,
             decode_responses=True
