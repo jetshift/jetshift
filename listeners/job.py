@@ -2,6 +2,7 @@ from jetshift_core.helpers.listeners import *
 
 channel = os.environ.get('REDIS_EVENT_CHANNEL', 'test')
 
+
 def handle_message(message):
     print('Job listener received message:', message)
 

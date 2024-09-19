@@ -2,8 +2,9 @@ from jetshift_core.helpers.listeners import *
 
 channel = os.environ.get('REDIS_EVENT_CHANNEL', 'test')
 
+
 def handle_message(message):
-    print('Job slistener received message:', message)
+    print('Jobs listener received message:', message)
 
     if message.get('type') == 'message':
         redis_conn = redis_connection()
