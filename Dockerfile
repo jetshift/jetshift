@@ -23,8 +23,8 @@ RUN mkdir -p /var/log && \
     touch /var/log/cron.log /var/log/cron.error.log && \
     chmod 666 /var/log/cron.log /var/log/cron.error.log
 
-# Convert the crontab and entrypoint.sh files to Unix line endings in a single RUN command
-RUN dos2unix /etc/crontabs/root /entrypoint.sh
+# Convert the crontab file to Unix line endings in a single RUN command
+RUN dos2unix /etc/crontabs/root
 
 # Runtime stage
 FROM python:3.12-alpine
