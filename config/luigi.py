@@ -1,13 +1,12 @@
+import luigi
 import logging
 import os
-
-import luigi
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
 log_level = os.environ.get('LOG_LEVEL', 'ERROR')
+local_scheduler = os.environ.get('LOCAL_SCHEDULER', True) == 'True'
 
 luigi.interface.InterfaceLogging.setup(
     type(
