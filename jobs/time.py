@@ -1,4 +1,4 @@
-from config.luigi import luigi
+from config.luigi import luigi, local_scheduler
 from datetime import datetime
 from jetshift_core.helpers.common import send_discord_message
 
@@ -26,7 +26,7 @@ class TimeJob(luigi.Task):
 
 
 def main():
-    luigi.build([TimeJob()], local_scheduler=True)
+    luigi.build([TimeJob()], local_scheduler=local_scheduler)
 
 
 if __name__ == '__main__':

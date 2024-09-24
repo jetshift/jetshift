@@ -1,4 +1,4 @@
-from config.luigi import luigi
+from config.luigi import luigi, local_scheduler
 from jetshift_core.helpers.clcikhouse import ping_clickhouse
 
 
@@ -11,7 +11,7 @@ class Ping(luigi.Task):
 
 
 def main():
-    luigi.build([Ping()], local_scheduler=True)
+    luigi.build([Ping()], local_scheduler=local_scheduler)
 
 
 if __name__ == '__main__':
