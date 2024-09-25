@@ -13,6 +13,7 @@ def seed_table(num_records):
 
     try:
         with connection.cursor() as cursor:
+            inserted = 0
             for i in range(1, num_records + 1):
                 id = last_id + i
                 name = fake.name()
@@ -23,6 +24,11 @@ def seed_table(num_records):
                 VALUES (%s, %s, %s)
                 """
                 cursor.execute(sql, (id, name, created_at))
+
+                inserted += 1
+
+                if inserted % 10000 == 0:
+                    click.echo(f"Inserted {inserted} records. Remaining: {num_records - i}")
 
         connection.commit()
     except Exception as e:
