@@ -11,7 +11,7 @@ def main():
         live_schema=True,
         truncate_table=False,
         primary_id_column='id',
-        extract_offset=5,
+        extract_offset=0,
         extract_limit=5,
         # extract_chunk_size=5,
         load_chunk_size=5
