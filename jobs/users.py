@@ -13,10 +13,10 @@ def main():
         # extract
         extract_offset=0,
         # extract_limit=10,
-        extract_chunk_size=10,
+        extract_chunk_size=100,
         # load
         truncate_table=False,
-        load_chunk_size=10,
+        load_chunk_size=100,
         sleep_interval=1
     )], local_scheduler=local_scheduler)
 

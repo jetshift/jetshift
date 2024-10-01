@@ -7,7 +7,7 @@ def main():
     migrations(migrations_list)
     jprint("✓ Migrations completed", 'success', True)
 
-    seeder_list = ["users -n 5"]
+    seeder_list = ["users -n 500"]
     seeders(seeder_list)
     jprint("✓ Seeders completed", 'success', True)
 
