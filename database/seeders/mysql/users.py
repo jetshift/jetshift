@@ -17,13 +17,14 @@ def seed_table(num_records):
             for i in range(1, num_records + 1):
                 id = last_id + i
                 name = fake.name()
+                email = fake.email()
                 created_at = fake.date_time_this_decade()
 
                 sql = f"""
-                INSERT INTO {table_name} (id, name, created_at)
-                VALUES (%s, %s, %s)
+                INSERT INTO {table_name} (id, name, email, created_at)
+                VALUES (%s, %s, %s, %s)
                 """
-                cursor.execute(sql, (id, name, created_at))
+                cursor.execute(sql, (id, name, email, created_at))
 
                 inserted += 1
 

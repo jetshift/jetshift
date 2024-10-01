@@ -5,13 +5,13 @@ columns:
     primary_key: true
     auto_increment: true
 
-  - name: username
+  - name: name
     type: VARCHAR(199)
     nullable: true
 
   - name: email
     type: VARCHAR(199)
-    nullable: false
+    nullable: true
 
   - name: created_at
     type: TIMESTAMP
