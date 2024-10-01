@@ -1,0 +1,23 @@
+table_name: users
+columns:
+  - name: id
+    type: INT
+    primary_key: true
+    auto_increment: true
+
+  - name: username
+    type: VARCHAR(199)
+    nullable: true
+
+  - name: email
+    type: VARCHAR(199)
+    nullable: false
+
+  - name: created_at
+    type: TIMESTAMP
+    default: CURRENT_TIMESTAMP
+
+  - name: updated_at
+    type: TIMESTAMP
+    default: CURRENT_TIMESTAMP
+    on_update: CURRENT_TIMESTAMP
