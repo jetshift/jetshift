@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-log_level = os.environ.get('LOG_LEVEL', 'ERROR')
+log_level = os.environ.get('LOG_LEVEL', 'DEBUG')
 local_scheduler = os.environ.get('LOCAL_SCHEDULER', True) == 'True'
 
 luigi.interface.InterfaceLogging.setup(

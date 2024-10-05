@@ -1,4 +1,5 @@
 table_name: users
+data: true
 columns:
   - name: id
     type: INT
@@ -8,11 +9,12 @@ columns:
   - name: name
     type: VARCHAR(199)
     nullable: true
+    seeder: fake.name()
 
   - name: email
     type: VARCHAR(199)
     nullable: true
-    seeder: email
+    seeder: fake.email()
 
   - name: created_at
     type: TIMESTAMP

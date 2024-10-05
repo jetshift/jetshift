@@ -7,16 +7,16 @@ WORKDIR /app
 RUN apk add --no-cache gcc musl-dev libffi-dev dos2unix
 
 # Copy requirements early to leverage Docker cache if they do not change
-COPY requirements.txt .
+COPY ../requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
-COPY . .
+COPY .. .
 
 # Ensure crontab is set up properly
-COPY crontab /etc/crontabs/root
+COPY ../.docker/crontab /etc/crontabs/root
 
 # Create the log directory and files with appropriate permissions in one layer
 RUN mkdir -p /var/log && \
@@ -32,7 +32,7 @@ FROM python:3.12-alpine
 WORKDIR /app
 
 # Install runtime dependencies, including Redis server and Supervisor
-RUN apk add --no-cache libffi dos2unix redis supervisor && \
+RUN apk add --no-cache libffi dos2unix redis && \
     mkdir -p /var/log && \
     touch /var/log/cron.log /var/log/cron.error.log && \
     chmod 666 /var/log/cron.log /var/log/cron.error.log
@@ -50,11 +50,13 @@ COPY --from=build /etc/crontabs/root /etc/crontabs/root
 # Install the app in editable mode
 RUN pip install -e .
 
+RUN pip install supervisor
+
 # Expose the necessary ports
 EXPOSE 8080 8082 6379
 
 # Supervisor configuration
-COPY supervisord.conf /etc/supervisord.conf
+COPY ../.docker/supervisord.conf /etc/supervisord.conf
 
 # Set the entrypoint to start supervisord
-ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]

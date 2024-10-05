@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-log_level = os.environ.get('LOG_LEVEL', 'ERROR')
+log_level = os.environ.get('LOG_LEVEL', 'DEBUG')
 sentry_dsn = os.environ.get('SENTRY_DSN')
 
 # Initialize Sentry SDK with Logging Integration
@@ -54,7 +54,7 @@ LOGGING = {
 
 if sentry_dsn:
     LOGGING["handlers"]["sentry"] = {
-        "level": "ERROR",
+        "level": log_level,
         "class": "sentry_sdk.integrations.logging.EventHandler",
     }
     LOGGING["loggers"]["jetshift"]["handlers"].append("sentry")
@@ -63,7 +63,7 @@ else:
         "class": "logging.FileHandler",
         "filename": "app.log",
         "formatter": "json",
-        "level": "ERROR",
+        "level": log_level,
     }
     LOGGING["loggers"]["jetshift"]["handlers"].append("file")
 

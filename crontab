@@ -1,2 +1,0 @@
-# * * * * * echo "Hello, World!" >> /var/log/cron.log 2>> /var/log/cron.error.log
-# * * * * * PYTHONPATH=/app python -m app.jobs.time >> /dev/null 2>&1

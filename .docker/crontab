@@ -1,0 +1,4 @@
+* * * * * echo "Hello, World!" >> /var/log/cron.log 2>> /var/log/cron.error.log
+
+#* * * * * /usr/local/bin/jetshift job time -t py >> /var/log/cron.error.log 2>&1
+#* * * * * PYTHONPATH=/app python -m app.jobs.time >> /var/log/cron.error.log 2>&1

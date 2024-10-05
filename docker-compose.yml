@@ -1,6 +1,8 @@
 services:
   luigi:
-    build: Dockerfile
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
     image: jetshift:latest
     container_name: jetshift
     ports:
