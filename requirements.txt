@@ -1,4 +1,4 @@
-jetshift-core==1.0.0a25
+jetshift-core==1.0.0a26
 python-dotenv==1.0.1
 flask==3.0.3
 waitress==3.0.0
