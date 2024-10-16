@@ -1,6 +1,6 @@
 {
-  "name": "Multi-Project Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+  "name": "JetShift Python 3.12 Dev Container",
+  "image": "jetshift/dc-python-312",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -18,13 +18,11 @@
   "settings": {
     "python.pythonPath": "/usr/local/bin/python"
   },
-  "remoteUser": "vscode",
+  "remoteUser": "jsuser",
   "mounts": [
-    "source=E:\\Python\\jetshift,target=/workspace/jetshift,type=bind,consistency=cached",
-    "source=E:\\Python\\jetshift-core,target=/workspace/jetshift-core,type=bind,consistency=cached"
+    "source=E:\\Python\\jetshift-core,target=/workspaces/jetshift-core,type=bind,consistency=cached"
   ],
   "workspaceFolders": [
-    "/workspace/jetshift",
-    "/workspace/jetshift-core"
+    "/workspaces/jetshift-core"
   ]
 }
