@@ -1,16 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from web.flask.helpers import broadcast_message
-from web.flask import *
+from web.flask.main import *
 from jetshift_core.helpers.common import run_job_in_new_process
 
 # Define Blueprint
-main_blueprint = Blueprint('main', __name__)
+main_bp = Blueprint('main', __name__)
 
-# Import websocket handler
-import web.flask.websocket
 
-@main_blueprint.route('/')
+@main_bp.route('/')
 def index():
+    from web.flask.helpers import broadcast_message
     full_host = request.host
     domain_name = full_host.split(':')[0]
 
@@ -19,7 +17,7 @@ def index():
 
     return render_template('index.html', domain_name=domain_name)
 
-@main_blueprint.route('/run-job', methods=['GET', 'POST'])
+@main_bp.route('/run-job', methods=['GET', 'POST'])
 def run_job():
     full_host = request.host
     domain_name = full_host.split(':')[0]

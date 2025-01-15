@@ -1,5 +1,5 @@
 import time
-from web.flask import socketio
+from web.flask.main import socketio
 
 
 def broadcast_message():

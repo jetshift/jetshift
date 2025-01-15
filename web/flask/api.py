@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 
+
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 
@@ -31,31 +32,26 @@ def add_database():
 
 @api_bp.route('/databases/list', methods=['GET'])
 def database_list():
+    from web.flask.databases.models import Database
+
+    type_param = request.args.get('type', '')
+    all_databases = Database.query.filter_by(type=type_param)
+
     data = [
         {
-            "id": 1,
-            "name": "Database 1",
-            "host": "localhost",
-            "port": 5432,
-            "user": "admin",
-            "password": "securepass",
-            "type": "postgres",
-            "status": "active",
-            "created_at": "2022-09-01T12:00:00Z",
-            "updated_at": "2023-09-01T15:30:00Z"
-        },
-        {
-            "id": 2,
-            "name": "Database 2",
-            "host": "remotehost.com",
-            "port": 3306,
-            "user": "readonlyuser",
-            "password": "securereadonlypass",
-            "type": "mysql",
-            "status": "inactive",
-            "created_at": "2022-09-15T08:00:00Z",
-            "updated_at": "2023-10-01T12:30:00Z"
+            "id": db_entry.id,
+            "type": db_entry.type,
+            "name": db_entry.name,
+            "host": db_entry.host,
+            "port": db_entry.port,
+            "user": db_entry.user,
+            "database": db_entry.database,
+            "engine": db_entry.engine,
+            "status": db_entry.status,
+            "created_at": db_entry.created_at.isoformat(),
+            "updated_at": db_entry.updated_at.isoformat(),
         }
+        for db_entry in all_databases
     ]
 
     response = {

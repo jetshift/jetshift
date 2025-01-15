@@ -19,7 +19,7 @@ export default function About() {
             }
         >
             <div>
-                <ListDatabase className="mt-2"/>
+                <ListDatabase className="mt-2" type="target" />
             </div>
 
         </AppLayout>
