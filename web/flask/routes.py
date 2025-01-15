@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from web.helpers import broadcast_message
-from web import *
+from web.flask.helpers import broadcast_message
+from web.flask import *
 from jetshift_core.helpers.common import run_job_in_new_process
 
 # Define Blueprint
 main_blueprint = Blueprint('main', __name__)
 
-# Import ws_handlers to register its event handlers
-import web.ws_handlers
+# Import websocket handler
+import web.flask.websocket
 
 @main_blueprint.route('/')
 def index():

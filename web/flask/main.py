@@ -1,4 +1,4 @@
-from web import app, socketio
+from web.flask import app, socketio
 import eventlet
 
 if __name__ == '__main__':
