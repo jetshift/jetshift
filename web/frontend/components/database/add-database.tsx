@@ -18,6 +18,7 @@ export default function AddDatabase(
         ...props
     }: React.ComponentPropsWithoutRef<"div">) {
 
+    // JSAlertDialog
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
 

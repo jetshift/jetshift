@@ -1,4 +1,4 @@
-from web.flask.utils import socketio
+from web.flask.utils.socket import socketio
 
 # Handle incoming WebSocket messages
 @socketio.on('message')

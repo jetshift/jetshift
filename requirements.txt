@@ -10,3 +10,5 @@ Flask-SocketIO==5.5.1
 eventlet==0.38.2
 flask-cors==5.0.0
 flask_sqlalchemy==3.1.1
+pymysql == 1.1.1
+psycopg==3.2.3

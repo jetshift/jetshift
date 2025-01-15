@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 
-
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 
@@ -30,29 +29,35 @@ def add_database():
     return jsonify(response), 200
 
 
+@api_bp.route('/databases/check-connection/<int:id>', methods=['GET'])
+def check_db_connection(id):
+    from web.flask.databases.models import Database
+    from web.flask.utils.common import model_to_dict
+    from web.flask.utils.models.database import check_database_connection
+
+    database = Database.query.filter_by(id=id).first()
+    if not database:
+        response = {
+            "success": False,
+            "message": "Database not found.",
+        }
+        return jsonify(response), 404
+
+    database_dict = model_to_dict(database)
+
+    success, message = check_database_connection(database_dict)
+    response = {
+        "success": success,
+        "message": message,
+    }
+    return jsonify(response), 200
+
+
 @api_bp.route('/databases/list', methods=['GET'])
 def database_list():
-    from web.flask.databases.models import Database
-
+    from web.flask.utils.models.database import get_database_list
     type_param = request.args.get('type', '')
-    all_databases = Database.query.filter_by(type=type_param)
-
-    data = [
-        {
-            "id": db_entry.id,
-            "type": db_entry.type,
-            "name": db_entry.name,
-            "host": db_entry.host,
-            "port": db_entry.port,
-            "user": db_entry.user,
-            "database": db_entry.database,
-            "engine": db_entry.engine,
-            "status": db_entry.status,
-            "created_at": db_entry.created_at.isoformat(),
-            "updated_at": db_entry.updated_at.isoformat(),
-        }
-        for db_entry in all_databases
-    ]
+    data = get_database_list(type_param)
 
     response = {
         "success": True,

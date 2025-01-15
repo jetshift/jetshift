@@ -2,9 +2,6 @@
 
 import * as React from "react"
 import {
-    AudioWaveform,
-    Command,
-    GalleryVerticalEnd,
     SquareTerminal,
 } from "lucide-react"
 

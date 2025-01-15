@@ -5,7 +5,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from config.database import redis_connection
 from config.logging import logger
-from web.flask.utils import socketio
+from web.flask.utils.socket import socketio
 from flask_sqlalchemy import SQLAlchemy
 
 # Load environment variables
@@ -19,7 +19,7 @@ def create_app():
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     # Configure database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///js.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
