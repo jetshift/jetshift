@@ -1,6 +1,7 @@
+import json
 from datetime import datetime
 from web.flask.main import app, db
-from web.flask.databases.models import User, Database
+from web.flask.databases.models import User, Database, MigrateDatabase, MigrateTable
 
 
 def seed_data():
@@ -14,9 +15,9 @@ def seed_data():
     databases = [
         Database(
             id=1,
+            title="SQLite 1",
             dialect="sqlite",
             type='source',
-            name="SQLite 1",
             database="jetshift.db",
             status=True,
             created_at=datetime.fromisoformat("2022-09-15T08:00:00"),
@@ -24,9 +25,9 @@ def seed_data():
         ),
         Database(
             id=2,
+            title="MySQL 1",
             dialect="mysql",
             type='target',
-            title="MySQL 1",
             host="localhost",
             port=3306,
             username="root",
@@ -38,9 +39,9 @@ def seed_data():
         ),
         Database(
             id=3,
+            title="Postgres 1",
             dialect="postgresql",
             type='target',
-            title="Postgres 1",
             host="localhost",
             port=5432,
             username="admin",
@@ -52,11 +53,28 @@ def seed_data():
         )
     ]
 
+    # Seed migrate databases
+    migrate_databases = [
+        MigrateDatabase(title="DBM Job 1", source_db_id=1, target_db_id=2),
+    ]
+
+    # Seed migrate tables
+    migrate_tables = [
+        MigrateTable(title="TM Job 1", source_db_id=1, target_db_id=2, source_tables=json.dumps(["users"])),
+    ]
+
     # Add to session and commit
     with app.app_context():
         try:
             db.create_all()  # Ensure tables exist
-            db.session.bulk_save_objects(users + databases)
+
+            db.session.bulk_save_objects(databases)
+            db.session.commit()  # Commit before adding related entries
+
+            db.session.bulk_save_objects(migrate_databases)
+            db.session.commit()
+
+            db.session.bulk_save_objects(users + migrate_tables)
             db.session.commit()
             print("Data seeded successfully!")
         except Exception as e:

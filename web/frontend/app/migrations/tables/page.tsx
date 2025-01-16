@@ -3,23 +3,23 @@
 import Link from "next/link";
 import AppLayout from "@/components/layouts/AppLayout";
 import {buttonVariants} from "@/components/ui/button"
-import ListDatabase from "@/components/databases/list";
+import ListMigrationTable from "@/components/migrations/tables";
 import React from "react";
 
 export default function About() {
     return (
         <AppLayout
             breadcrumbItems={[
-                {label: "Databases", href: "/"},
-                {label: "Sources"},
+                {label: "Migrations", href: "/"},
+                {label: "Tables"},
             ]}
 
             rightSection={
-                <Link className={buttonVariants({variant: "outline"})} href={"/databases/sources/add"}>Add Source</Link>
+                <Link className={buttonVariants({variant: "outline"})} href={"/migrations/tables/add"}>Add Job</Link>
             }
         >
             <div>
-                <ListDatabase className="mt-2" type="source" />
+                <ListMigrationTable className="mt-2" />
             </div>
 
         </AppLayout>

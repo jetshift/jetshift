@@ -1,7 +1,7 @@
 'use client'
 
 import AppLayout from "@/components/layouts/AppLayout";
-import AddDatabase from "@/components/database/add-database";
+import AddDatabase from "@/components/databases/add-database";
 
 export default function About() {
     return (

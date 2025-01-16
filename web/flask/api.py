@@ -12,6 +12,7 @@ def index():
     return jsonify(response), 200
 
 
+# Databases
 @api_bp.route('/databases/add', methods=['POST'])
 def add_database():
     from web.flask.utils.models.database import create_database
@@ -47,6 +48,7 @@ def check_db_connection(database_id):
     }
     return jsonify(response), 200
 
+
 @api_bp.route('/databases/delete/<int:database_id>', methods=['POST'])
 def remove_database(database_id):
     from web.flask.utils.models.database import delete_database
@@ -58,11 +60,38 @@ def remove_database(database_id):
         "message": message,
     }), 200
 
+
 @api_bp.route('/databases/list', methods=['GET'])
 def database_list():
     from web.flask.utils.models.database import get_database_list
     type_param = request.args.get('type', '')
     data = get_database_list(type_param)
+
+    response = {
+        "success": True,
+        "message": "Data received successfully",
+        "data": data,
+    }
+    return jsonify(response), 200
+
+
+# Migrate Databases
+@api_bp.route('/migrations/databases', methods=['GET'])
+def migration_databases():
+    from web.flask.utils.models.migrate_database import get_database_list
+    data = get_database_list()
+
+    response = {
+        "success": True,
+        "message": "Data received successfully",
+        "data": data,
+    }
+    return jsonify(response), 200
+
+@api_bp.route('/migrations/tables', methods=['GET'])
+def migration_tables():
+    from web.flask.utils.models.migrate_table import get_table_list
+    data = get_table_list()
 
     response = {
         "success": True,

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import AppLayout from "@/components/layouts/AppLayout";
 import {buttonVariants} from "@/components/ui/button"
-import ListDatabase from "@/components/database/list";
+import ListDatabase from "@/components/databases/list";
 import React from "react";
 
 export default function About() {

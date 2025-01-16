@@ -2,7 +2,9 @@
 
 import * as React from "react"
 import {
-    SquareTerminal,
+    Database,
+    LayoutDashboard,
+    FolderSync
 } from "lucide-react"
 
 import {NavMain} from "@/components/nav-main"
@@ -34,7 +36,7 @@ const data = {
         {
             title: "Databases",
             url: "#",
-            icon: SquareTerminal,
+            icon: Database,
             isActive: true,
             items: [
                 {
@@ -44,6 +46,22 @@ const data = {
                 {
                     title: "Targets",
                     url: "/databases/targets",
+                },
+            ],
+        },
+        {
+            title: "Migrations",
+            url: "#",
+            icon: FolderSync,
+            isActive: true,
+            items: [
+                {
+                    title: "Databases",
+                    url: "/migrations/databases",
+                },
+                {
+                    title: "Tables",
+                    url: "/migrations/tables",
                 },
             ],
         },
@@ -81,7 +99,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuItem>
                             <Link href="/">
                                 <SidebarMenuButton tooltip='sss'>
-                                    <SquareTerminal/>
+                                    <LayoutDashboard/>
                                     <span>Dashboard</span>
                                 </SidebarMenuButton>
                             </Link>
