@@ -1,6 +1,6 @@
 import {useEffect, useState, useRef} from "react";
 import {cn} from "@/lib/utils";
-import {Router} from "lucide-react";
+import {Router, Loader, CircleX} from "lucide-react";
 import {
     Table,
     TableBody,
@@ -10,12 +10,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import JSAlertDialog from "@/components/common/js-alert-dialog";
+import {useToast} from "@/hooks/use-toast"
 
 interface Database {
     id: number;
     type: string;
-    name: string;
+    title: string;
     host: string;
     port: number;
     username: string;
@@ -37,16 +37,16 @@ export default function ListDatabase(
         ...props
     }: ListDatabaseProps) {
 
+    const {toast} = useToast()
     const [databases, setDatabases] = useState<Database[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const isFetched = useRef(false);
-
-    // JSAlertDialog
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [alertMessage, setAlertMessage] = useState("");
+    const [isCheckingConnection, setCheckingConnection] = useState<number | null>(null);
 
     const checkConnection = async (id: number) => {
         try {
+            setCheckingConnection(id);
+
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/databases/check-connection/${id}`,
                 {
@@ -58,11 +58,23 @@ export default function ListDatabase(
             }
             const data = await response.json();
 
-            setIsDialogOpen(true);
-            setAlertMessage(`${data.message}`);
+            if (data.success) {
+                toast({
+                    description: `${data.message}`,
+                })
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: `${data.message}`,
+                })
+            }
         } catch (error) {
-            setIsDialogOpen(true);
-            setAlertMessage(`Error checking connection for ID ${id}: ${error}`);
+            toast({
+                variant: "destructive",
+                description: `Error checking connection for ID ${id}: ${error}`,
+            })
+        } finally {
+            setCheckingConnection(null);
         }
     };
 
@@ -78,7 +90,10 @@ export default function ListDatabase(
                 const data = await response.json();
                 setDatabases(data.data || []);
             } catch (error) {
-                console.error("Error fetching databases:", error);
+                toast({
+                    variant: "destructive",
+                    description: `Error fetching databases: ${error}`,
+                })
             } finally {
                 setLoading(false);
             }
@@ -101,7 +116,7 @@ export default function ListDatabase(
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">ID</TableHead>
-                        <TableHead>Name</TableHead>
+                        <TableHead>Title</TableHead>
                         <TableHead>Dialect</TableHead>
                         <TableHead>Host</TableHead>
                         <TableHead>Port</TableHead>
@@ -116,34 +131,30 @@ export default function ListDatabase(
                     {databases.map((db) => (
                         <TableRow key={db.id}>
                             <TableCell className="font-medium">{db.id}</TableCell>
-                            <TableCell>{db.name}</TableCell>
+                            <TableCell>{db.title}</TableCell>
                             <TableCell>{db.dialect}</TableCell>
                             <TableCell>{db.host}</TableCell>
                             <TableCell>{db.port}</TableCell>
                             <TableCell>{db.username}</TableCell>
                             <TableCell>{db.database}</TableCell>
-                            <TableCell>{db.status === 1 ? "Active" : "Inactive"}</TableCell>
+                            <TableCell>{db.status ? "Active" : "Inactive"}</TableCell>
                             <TableCell>{new Date(db.created_at).toLocaleString()}</TableCell>
-                            <TableCell>
-                                <span
-                                    title="Check connection"
-                                    onClick={() => checkConnection(db.id)}
-                                    className="cursor-pointer"
+                            <TableCell className="flex items-center space-x-2">
+                               <span
+                                   title={isCheckingConnection === db.id ? "Checking connection..." : "Check connection"}
+                                   onClick={() => checkConnection(db.id)}
+                                   className={`cursor-pointer ${
+                                       isCheckingConnection === db.id ? "opacity-50 pointer-events-none" : ""
+                                   }`}
                                 >
-                                    <Router/>
+                                {isCheckingConnection === db.id ? <Loader/> : <Router color={"#4663AC"}/>}
                                 </span>
+                                <span><CircleX color={"#E3646F"}/></span>
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-
-            <JSAlertDialog
-                isOpen={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
-                message={alertMessage}
-            />
-
         </div>
     );
 }

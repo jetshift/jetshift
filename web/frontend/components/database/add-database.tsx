@@ -10,21 +10,39 @@ import {
 } from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import JSAlertDialog from "@/components/common/js-alert-dialog";
+import {useToast} from "@/hooks/use-toast"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {Loader} from "lucide-react";
+
+type AddDatabaseProps = React.ComponentPropsWithoutRef<"div"> & {
+    type?: string;
+};
 
 export default function AddDatabase(
     {
         className,
+        type,
         ...props
-    }: React.ComponentPropsWithoutRef<"div">) {
+    }: AddDatabaseProps) {
 
-    // JSAlertDialog
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [alertMessage, setAlertMessage] = useState("");
-
+    const {toast} = useToast()
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
+        type: "",
+        dialect: "",
+        title: "",
         host: "",
+        port: "",
+        username: "",
         password: "",
+        database: "",
     });
 
     const handleInputEvent = (e: React.ChangeEvent<HTMLInputElement> | React.ClipboardEvent<HTMLInputElement>) => {
@@ -37,13 +55,18 @@ export default function AddDatabase(
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
 
         // Validate required fields
         if (!formData.host || !formData.password) {
-            setIsDialogOpen(true);
-            setAlertMessage("Host and password are required.");
+            toast({
+                variant: "destructive",
+                description: "Host and password are required.",
+            })
             return;
         }
+
+        formData.type = type ?? '';
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/databases/add`, {
@@ -55,16 +78,33 @@ export default function AddDatabase(
             });
 
             if (response.ok) {
-                setIsDialogOpen(true);
-                setAlertMessage("Database added successfully!");
-                // setFormData({host: "", password: ""});
+                const data = await response.json();
+                if (data.success) {
+                    toast({
+                        description: data.message,
+                    })
+                    // setFormData({host: "", password: ""});
+                } else {
+                    toast({
+                        variant: "destructive",
+                        description: data.message,
+                    })
+                }
             } else {
                 const errorData = await response.json();
-                setIsDialogOpen(true);
-                setAlertMessage(`${errorData.message}`);
+
+                toast({
+                    variant: "destructive",
+                    description: `${errorData.message}`,
+                })
             }
         } catch (error) {
-            setAlertMessage(`${error}`);
+            toast({
+                variant: "destructive",
+                description: `${error}`,
+            })
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -77,8 +117,54 @@ export default function AddDatabase(
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
-                        <div className="grid gap-6">
+
+                        <div className="grid grid-cols-1 gap-6 mb-6">
+                            <div className="grid gap-2">
+                                <Label htmlFor="dialect">Dialect</Label>
+                                <Select
+                                    onValueChange={(value) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            dialect: value,
+                                        }))
+                                    }
+                                    name="dialect"
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a dialect"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="sqlite">SQLite</SelectItem>
+                                            <SelectItem value="mysql">MySQL</SelectItem>
+                                            <SelectItem value="postgresql">PostgreSQL</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                {formData.dialect === "" && (
+                                    <span className="text-red-500 text-sm mt-1">Dialect is required.</span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+
+                            {/* Left columns */}
                             <div className="grid gap-6">
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="title">Title</Label>
+                                    <Input
+                                        id="title"
+                                        type="text"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleInputEvent}
+                                        onPaste={handleInputEvent}
+                                        placeholder="MyDB 1"
+                                        required
+                                    />
+                                </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="host">Host</Label>
                                     <Input
@@ -87,8 +173,38 @@ export default function AddDatabase(
                                         name="host"
                                         value={formData.host}
                                         onChange={handleInputEvent}
-                                        onPaste={handleInputEvent} // Handle paste events
+                                        onPaste={handleInputEvent}
                                         placeholder="localhost"
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="port">Port</Label>
+                                    <Input
+                                        id="port"
+                                        type="number"
+                                        name="port"
+                                        value={formData.port}
+                                        onChange={handleInputEvent}
+                                        onPaste={handleInputEvent}
+                                        placeholder="3306"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Right columns */}
+                            <div className="grid gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="username">Username</Label>
+                                    <Input
+                                        id="username"
+                                        type="text"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleInputEvent}
+                                        onPaste={handleInputEvent}
+                                        placeholder="root"
                                         required
                                     />
                                 </div>
@@ -104,21 +220,27 @@ export default function AddDatabase(
                                         required
                                     />
                                 </div>
-                                <Button type="submit" className="w-full">
-                                    Add
-                                </Button>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="database">Database Name</Label>
+                                    <Input
+                                        id="database"
+                                        type="text"
+                                        name="database"
+                                        value={formData.database}
+                                        onChange={handleInputEvent}
+                                        onPaste={handleInputEvent}
+                                        placeholder="Database Name"
+                                        required
+                                    />
+                                </div>
                             </div>
                         </div>
+                        <Button type="submit" className="w-full mt-6">
+                            {isLoading ? <Loader/> : "Add"}
+                        </Button>
                     </form>
                 </CardContent>
             </Card>
-
-            <JSAlertDialog
-                isOpen={isDialogOpen}
-                onClose={() => setIsDialogOpen(false)}
-                message={alertMessage}
-            />
-
         </div>
     );
 }
