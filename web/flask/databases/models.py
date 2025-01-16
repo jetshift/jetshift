@@ -22,7 +22,7 @@ class Database(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     dialect = db.Column(db.String(50), nullable=False)  # e.g., mysql, postgres
     type = db.Column(db.String(50), nullable=False)  # e.g., source, target
-    name = db.Column(db.String(120), nullable=False)
+    title = db.Column(db.String(120), nullable=False)
     host = db.Column(db.String(191), nullable=True)
     port = db.Column(db.Integer, nullable=True)
     username = db.Column(db.String(120), nullable=True)

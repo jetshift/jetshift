@@ -40,8 +40,29 @@ export default function ListDatabase(
     const {toast} = useToast()
     const [databases, setDatabases] = useState<Database[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const isFetched = useRef(false);
+    const isFetchedDatabases = useRef(false);
     const [isCheckingConnection, setCheckingConnection] = useState<number | null>(null);
+    const [isDeletingDatabase, setDeletingDatabase] = useState<number | null>(null);
+
+    const fetchDatabases = async (type?: string) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/databases/list${type ? `?type=${type}` : ""}`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch databases");
+            }
+            const data = await response.json();
+            setDatabases(data.data || []);
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                description: `Error fetching databases: ${error}`,
+            })
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const checkConnection = async (id: number) => {
         try {
@@ -78,30 +99,46 @@ export default function ListDatabase(
         }
     };
 
-    useEffect(() => {
-        const fetchDatabases = async () => {
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/databases/list${type ? `?type=${type}` : ""}`
-                );
-                if (!response.ok) {
-                    throw new Error("Failed to fetch databases");
+    const deleteDatabase = async (id: number) => {
+        try {
+            setDeletingDatabase(id);
+
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/databases/delete/${id}`,
+                {
+                    method: "POST",
                 }
-                const data = await response.json();
-                setDatabases(data.data || []);
-            } catch (error) {
+            );
+            if (!response.ok) {
+                throw new Error("Failed to delete database");
+            }
+            const data = await response.json();
+
+            if (data.success) {
+                fetchDatabases(type);
+                toast({
+                    description: `${data.message}`,
+                })
+            } else {
                 toast({
                     variant: "destructive",
-                    description: `Error fetching databases: ${error}`,
+                    description: `${data.message}`,
                 })
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                description: `Error checking connection for ID ${id}: ${error}`,
+            })
+        } finally {
+            setDeletingDatabase(null);
+        }
+    };
 
-        if (!isFetched.current) {
-            isFetched.current = true;
-            fetchDatabases();
+    useEffect(() => {
+        if (!isFetchedDatabases.current) {
+            isFetchedDatabases.current = true;
+            fetchDatabases(type);
         }
     }, [type]);
 
@@ -146,10 +183,15 @@ export default function ListDatabase(
                                    className={`cursor-pointer ${
                                        isCheckingConnection === db.id ? "opacity-50 pointer-events-none" : ""
                                    }`}
-                                >
+                               >
                                 {isCheckingConnection === db.id ? <Loader/> : <Router color={"#4663AC"}/>}
                                 </span>
-                                <span><CircleX color={"#E3646F"}/></span>
+                                <span
+                                    title={"Delete database"}
+                                    onClick={() => deleteDatabase(db.id)}
+                                >
+                                {isDeletingDatabase === db.id ? <Loader/> : <CircleX color={"#E3646F"}/>}
+                                </span>
                             </TableCell>
                         </TableRow>
                     ))}

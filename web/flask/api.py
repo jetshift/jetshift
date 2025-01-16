@@ -14,28 +14,23 @@ def index():
 
 @api_bp.route('/databases/add', methods=['POST'])
 def add_database():
-    data = request.get_json()
+    from web.flask.utils.models.database import create_database
 
-    host = data.get("host")
-    password = data.get('password')
+    success, message = create_database(request)
 
-    response = {
-        "success": True,
-        "message": "Data received successfully",
-        "host": host,
-        "password": password,
-    }
-
-    return jsonify(response), 200
+    return jsonify({
+        "success": success,
+        "message": message,
+    }), 200
 
 
-@api_bp.route('/databases/check-connection/<int:id>', methods=['GET'])
-def check_db_connection(id):
+@api_bp.route('/databases/check-connection/<int:database_id>', methods=['GET'])
+def check_db_connection(database_id):
     from web.flask.databases.models import Database
     from web.flask.utils.common import model_to_dict
     from web.flask.utils.models.database import check_database_connection
 
-    database = Database.query.filter_by(id=id).first()
+    database = Database.query.filter_by(id=database_id).first()
     if not database:
         response = {
             "success": False,
@@ -52,6 +47,16 @@ def check_db_connection(id):
     }
     return jsonify(response), 200
 
+@api_bp.route('/databases/delete/<int:database_id>', methods=['POST'])
+def remove_database(database_id):
+    from web.flask.utils.models.database import delete_database
+
+    success, message = delete_database(database_id)
+
+    return jsonify({
+        "success": success,
+        "message": message,
+    }), 200
 
 @api_bp.route('/databases/list', methods=['GET'])
 def database_list():
